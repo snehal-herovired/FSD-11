@@ -24,4 +24,10 @@ const divClasses =document.querySelector('.body');
 // console.log(divClasses.value);
 
 const inputTag =document.querySelector(".input");
-console.log(inputTag.value)
+// console.log(inputTag.value)
+inputTag.value="Hero"
+
+
+const introTag =document.querySelector('#intro');
+introTag.style.color="red";
+introTag.innerHTML="Hi batch 11"
