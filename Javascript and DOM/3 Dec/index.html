@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        //    Callbacks and Promises  : async programming 
+        // Async Programming : mananging non-blocking;
+        // non -blocking : time taking logic;
+
+        //Callback : sync and async callback;
+        //Callback exists due to function being passed as an args to another function;
+        // Async callback : method (Settimeout of js).
+
+
+        //  Why do we need Promises when we can callback?
+
+        // ***************Prblem statement*****************
+        //fetching data from external source(server), process this data  ,
+        // we want to call again an external api for data.
+
+        function fetchdata(callback) {
+            // making an api call : we need data from external source
+            setTimeout(() => {
+                const data = { message: 'Hello from server 1' };
+                callback(data); // 
+            }, 1000)
+
+        }
+
+        function processData(data, callback) {
+            // processing the data here;
+            setTimeout(() => {
+                const processingData = `${data} from server `;
+                callback(processingData); //
+            }, 1000)
+        }
+
+        function makeSecondApiCall(processData, callback) {
+            // this function takes processdata  and then makes the api call;
+            setTimeout(() => {
+                const result = `result from proccesdata ${processData}`;
+                callback(result);
+            }, 1000)
+        }
+
+        //Callback Hell or Pyramid of Death;
+        // Modularity, readibility and error handling complexity;
+        fetchdata((data) => {
+            processData(data, (processingData) => {
+                makeSecondApiCall(processingData, (result) => {
+                    //
+                    console.log(result, "from inner callback")
+                })
+            })
+        })
+
+        //Promises :ES6 version 
+        //pending, resolve and reject ;
+
+        function fetchdataPromise() {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const data = { id: 1, message: "fetched data from server" }
+                    resolve(data);
+                }, 1000)
+            })
+        }
+
+        function processDataPromise(data) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const processData = `${data.message} from fetchdataPromise`
+                    resolve(processData)
+                }, 1000)
+            })
+        }
+
+        function makeSecondApiCallPromise(proccesdata) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const result = `${proccesdata} this is the final result`;
+                    resolve(result);
+                }, 1000)
+            })
+        }
+
+        //Handling promises 
+        // .then() => resolved statement
+        //.catch()=> rejected errors;
+
+
+        // Promide chaining :
+        // fetchdataPromise()
+        //    .then(processDataPromise)
+        //    .then(makeSecondApiCallPromise)// 4 promise
+        //    .then((result)=>{
+        //     console.log(result,"Promise function");
+        //    })
+        //    .catch((error)=>{
+        //     console.log(error);
+        //    })
+
+
+        //async -await
+        async function parentfun() {
+
+            try {
+                let data = await fetchdataPromise();
+                // console.log('data delivered form fetchdata',data);
+                let processedData = await processDataPromise(data);
+                console.log('data delivered form processDataPromise', processedData);
+                let finalresult = await makeSecondApiCallPromise(processedData);
+                console.log("final result", finalresult);
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        parentfun();
+
+
+
+        async function giveProducts() {
+            const response = await fetch("https://dummyjson.com/products");
+            console.log(response);
+            const product = await response.json();
+            console.log(product);
+        }
+        giveProducts()
+    </script>
+</body>
+
+</html>
